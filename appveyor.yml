@@ -1,0 +1,27 @@
+image: Visual Studio 2017
+
+branches:
+  only:
+    - master
+
+build: off
+
+build_script:
+  - cmd: dotnet publish --framework netcoreapp2.1 --runtime ubuntu.16.04-x64 --output "..\..\UbuntuBotPublish\"
+  - cmd: dotnet publish --framework netcoreapp2.1 --runtime win10-x64 --output "..\..\WindowsBotPublish\"
+  - cmd: 7z a FoxUbuntu.zip "%APPVEYOR_BUILD_FOLDER%\UbuntuBotPublish\*"
+  - cmd: 7z a FoxWindows.zip "%APPVEYOR_BUILD_FOLDER%\WindowsBotPublish\*"
+
+artifacts:
+  - path: FoxUbuntu.zip
+    name: Fox publish for Ubuntu
+  - path: FoxWindows.zip
+    name: Fox publish for Windows
+      
+notifications:
+  - provider: Slack
+    on_build_success: true
+    on_build_failure: true
+    on_build_status_changed: true
+    incoming_webhook:
+      secure: 'oUv6XLAL1ZAr8hMCy+YxYm2wlqZJPyhHRZcucvjB3/IW+8xmx9pbH3WsWGKb7F0pgRyzYJrEmHKLxEkoILKqxWR74eP+ptHKncXoqtIFWyAa2OPNWOYxr3g+4hBNtjGmAkJEvEFGKrOwv4w1t4qsZV0p8ar1wiihSQ1TCTPWz7fRGEezwwBOmycB3FPdqtZr'
